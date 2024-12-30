@@ -1,8 +1,45 @@
 import React, { useState } from 'react';
 import { Image, Smile, Calendar, MapPin } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 export function TweetBox() {
     const [tweet, setTweet] = useState('');
+    const { token } = useAuth(); // obtém o token JWT do Zustand (ou outro state management)
+
+    // Função para enviar o tweet para o backend
+    const handleTweet = async () => {
+        // Se o campo está vazio ou não temos token, não faz nada
+        if (!tweet.trim() || !token) return;
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/tweets/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Inclui o token JWT no header
+                    'Authorization': `Bearer ${token}`,
+                },
+                // Ajuste o body de acordo com o que o back-end espera.
+                // No seu modelo, a prop "author" é necessária.
+                body: JSON.stringify({
+                    author: 'MeuUsername',  // ou pegue do seu state de usuário
+                    content: tweet
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao criar tweet');
+            }
+
+            // Para tratar a resposta (por exemplo, atualizar a lista de tweets localmente)
+            // const newTweet = await response.json();
+
+            // Limpa o textarea
+            setTweet('');
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <div className="border-b border-gray-800 p-4">
@@ -36,8 +73,9 @@ export function TweetBox() {
                             </button>
                         </div>
                         <button
+                            onClick={handleTweet}
                             className="bg-blue-500 text-white px-4 py-2 rounded-full font-bold hover:bg-blue-600 disabled:opacity-50"
-                            disabled={!tweet.trim()}
+                            disabled={!tweet.trim() || !token}
                         >
                             Tweet
                         </button>

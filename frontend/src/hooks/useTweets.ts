@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from './useAuth';
 
 interface Tweet {
     id: string;
     author: string;
-    handle: string;
+    handle?: string;   // se quiser
     content: string;
     timestamp: string;
     likes: number;
@@ -12,33 +13,30 @@ interface Tweet {
 }
 
 export function useTweets() {
-    const [tweets, setTweets] = useState<Tweet[]>([
-        {
-            id: '1',
-            author: 'John Doe',
-            handle: 'johndoe',
-            content: 'Just setting up my Twitter clone! 🚀',
-            timestamp: '2h',
-            likes: 42,
-            retweets: 5,
-            replies: 3,
-        },
-        {
-            id: '2',
-            author: 'Jane Smith',
-            handle: 'janesmith',
-            content: 'This Twitter clone looks amazing! Love the dark theme. 🌙',
-            timestamp: '4h',
-            likes: 128,
-            retweets: 12,
-            replies: 8,
-        },
-    ]);
+    const [tweets, setTweets] = useState<Tweet[]>([]);
+    const { token } = useAuth(); // para pegar o token do Zustand
 
-    // TODO: Implement API integration
     useEffect(() => {
-        // Fetch tweets from API
-    }, []);
+        async function fetchTweets() {
+            if (!token) {
+                // Se não tiver token, não busca ou busca público (se a API permitir)
+                return;
+            }
+            try {
+                const resp = await fetch('http://127.0.0.1:8000/api/tweets/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                if (!resp.ok) throw new Error('Erro ao buscar tweets');
+                const data = await resp.json();
+                setTweets(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchTweets();
+    }, [token]);
 
     return { tweets };
 }
