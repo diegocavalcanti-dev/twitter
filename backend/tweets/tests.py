@@ -9,19 +9,19 @@ class TweetAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(
-            username="TestUser",
             email="testuser@example.com",
             password="password123"
         )
+        # Login usando email e password
         response = self.client.post('/api/token/', {
-            "username": "TestUser",
+            "email": "testuser@example.com",
             "password": "password123"
         })
         self.token = response.json().get("access")
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
 
         self.tweet = Tweet.objects.create(
-            author="TestUser",
+            author="testuser@example.com",
             content="This is a test tweet",
         )
 
@@ -30,6 +30,6 @@ class TweetAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_tweet(self):
-        data = {"author": "TestUser", "content": "Another test tweet"}
+        data = {"author": "testuser@example.com", "content": "Another test tweet"}
         response = self.client.post('/api/tweets/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
