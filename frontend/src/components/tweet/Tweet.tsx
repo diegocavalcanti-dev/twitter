@@ -17,7 +17,7 @@ export function Tweet({ author, handle, content, timestamp, likes, retweets, rep
         <div className="border-b border-gray-800 p-4 hover:bg-gray-900/50">
             <div className="flex space-x-4">
                 <img
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
                     alt={author}
                     className="h-12 w-12 rounded-full"
                 />

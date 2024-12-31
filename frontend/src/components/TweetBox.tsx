@@ -45,7 +45,7 @@ export function TweetBox() {
         <div className="border-b border-gray-800 p-4">
             <div className="flex space-x-4">
                 <img
-                    src="https://avatars.githubusercontent.com/u/380624?s=200&v=4"
+                    src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
                     alt="Profile"
                     className="h-12 w-12 rounded-full"
                 />
