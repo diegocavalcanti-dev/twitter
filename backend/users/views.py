@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from .serializers import UserCreateSerializer, UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -20,10 +20,8 @@ def signup(request):
     """
     serializer = UserCreateSerializer(data=request.data)
     if serializer.is_valid():
-        # Criar o usuário e hash da senha
+        # Criar o usuário utilizando create_user
         user = serializer.save()
-        user.set_password(request.data.get('password'))  # Hash da senha
-        user.save()  # Salvar o usuário com a senha hashada
         print(f"Usuário criado: {user.email}")
         return Response({"id": user.id}, status=status.HTTP_201_CREATED)
     else:
@@ -41,8 +39,17 @@ class UserViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'create':
-            return [AllowAny()]
+            return [AllowAny()]  # Permitir criação sem autenticação
         return [IsAuthenticated()]
+
+    def get_serializer_class(self):
+        """
+        Usa o UserCreateSerializer para criar usuários
+        e o UserSerializer para outras ações.
+        """
+        if self.action == 'create':
+            return UserCreateSerializer
+        return super().get_serializer_class()
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -52,26 +59,21 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         email = attrs.get('email')
         password = attrs.get('password')
 
-        # Log dos valores recebidos
-        print(f"Dados recebidos para autenticação: {attrs}")
+        print(f"Dados recebidos para autenticação: {attrs}")  # Adicionando log
 
         if not email or not password:
-            print("Erro: Email ou senha ausentes.")
+            print("Erro: Email ou senha ausentes.")  # Log adicional
             raise serializers.ValidationError({"detail": "Email e senha são obrigatórios."})
 
-        try:
-            user = User.objects.get(email=email)
-            if not user.check_password(password):
-                print("Erro: Credenciais inválidas.")
-                raise serializers.ValidationError({"detail": "Credenciais inválidas."})
-        except User.DoesNotExist:
-            print("Erro: Usuário não encontrado.")
-            raise serializers.ValidationError({"detail": "Usuário não encontrado."})
+        user = authenticate(email=email, password=password)
+        if not user:
+            print("Erro: Credenciais inválidas.")  # Log adicional
+            raise serializers.ValidationError({"detail": "Credenciais inválidas."})
 
         # Se passou, retorna o token
         data = super().validate(attrs)
         data['user'] = UserSerializer(user).data
-        print(f"Autenticação bem-sucedida: {data}")
+        print(f"Autenticação bem-sucedida: {data}")  # Log adicional
         return data
 
 

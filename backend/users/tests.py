@@ -30,6 +30,7 @@ class UserAPITest(TestCase):
         data = {
             "email": "newuser@example.com",
             "password": "newpassword123",
+            "password_confirmation": "newpassword123",  # Campo obrigatório
         }
         response = self.client.post('/api/users/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
