@@ -1,14 +1,48 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import para redirecionamento
 import { Twitter } from 'lucide-react';
 
 export function Signup() {
-    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate(); // Hook para navegação
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Implement signup logic
+
+        // Verificar se as senhas coincidem
+        if (password !== passwordConfirmation) {
+            setError('Passwords do not match');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/users/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    password_confirmation: passwordConfirmation, // Enviar para o back-end
+                }),
+            });
+
+            if (response.ok) {
+                console.log('User created successfully');
+                setError('');
+                navigate('/login'); // Redirecionar para a página de login
+            } else {
+                const data = await response.json();
+                setError(data.detail || 'Failed to create user');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            setError('An unexpected error occurred.');
+        }
     };
 
     return (
@@ -18,41 +52,38 @@ export function Signup() {
                     <Twitter className="h-12 w-12 text-white" />
                 </div>
                 <h2 className="text-center text-3xl font-bold text-white">Create your account</h2>
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Name"
-                            className="w-full px-4 py-3 bg-black border border-gray-800 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-
+                <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
                         <input
                             type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="Email address"
                             className="w-full px-4 py-3 bg-black border border-gray-800 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                             required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-
                     <div>
                         <input
                             type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="Password"
                             className="w-full px-4 py-3 bg-black border border-gray-800 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                             required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-
+                    <div>
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            className="w-full px-4 py-3 bg-black border border-gray-800 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                            required
+                            value={passwordConfirmation}
+                            onChange={(e) => setPasswordConfirmation(e.target.value)}
+                        />
+                    </div>
+                    {error && <p className="text-red-500">{error}</p>}
                     <button
                         type="submit"
                         className="w-full py-3 bg-blue-500 text-white rounded-full font-bold hover:bg-blue-600"
@@ -60,7 +91,6 @@ export function Signup() {
                         Sign up
                     </button>
                 </form>
-
                 <p className="text-center text-gray-500">
                     Already have an account?{' '}
                     <a href="/login" className="text-blue-500 hover:underline">
