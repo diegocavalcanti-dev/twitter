@@ -30,7 +30,7 @@ export function useTweets() {
                 });
                 if (!resp.ok) throw new Error('Erro ao buscar tweets');
                 const data = await resp.json();
-                setTweets(data);
+                setTweets(data); // Atualiza os tweets no estado
             } catch (error) {
                 console.error(error);
             }
@@ -38,5 +38,5 @@ export function useTweets() {
         fetchTweets();
     }, [token]);
 
-    return { tweets };
+    return { tweets, setTweets }; // Retorna o estado dos tweets e a função de atualização
 }
