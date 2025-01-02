@@ -1,4 +1,3 @@
-// useAuth.ts (exemplo com Zustand)
 import { create } from 'zustand';
 
 interface AuthState {
@@ -7,27 +6,27 @@ interface AuthState {
     login: (email: string, password: string) => Promise<void>;
     signup: (name: string, email: string, password: string) => Promise<void>;
     logout: () => void;
+    restoreSession: () => void;
 }
 
 export const useAuth = create<AuthState>((set) => ({
     isAuthenticated: false,
-    token: null,
+    token: localStorage.getItem('authToken'), // Carrega o token do localStorage no início
     login: async (email, password) => {
         try {
-            // chamando /api/users/token/ (não /api/token/)
             const resp = await fetch('http://127.0.0.1:8000/api/users/token/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }), // <--- "email", não "username"
+                body: JSON.stringify({ email, password }),
             });
             if (!resp.ok) {
-                throw new Error('Login failed');
+                throw new Error('Falha no login');
             }
             const data = await resp.json();
-            // data = { access, refresh }
+            localStorage.setItem('authToken', data.access); // Salva o token no localStorage
             set({ isAuthenticated: true, token: data.access });
         } catch (error) {
-            console.error(error);
+            console.error('Erro ao fazer login:', error);
             set({ isAuthenticated: false, token: null });
         }
     },
@@ -40,20 +39,29 @@ export const useAuth = create<AuthState>((set) => ({
                     email,
                     password,
                     bio: "",
-                    avatar: null
+                    avatar: null,
                 }),
             });
             if (!resp.ok) {
-                throw new Error('Signup failed');
+                throw new Error('Falha no cadastro');
             }
-            // Depois de criar, faça login automaticamente
             await resp.json();
-            await useAuth.getState().login(email, password);
+            await useAuth.getState().login(email, password); // Faz login automaticamente após o cadastro
         } catch (error) {
-            console.error(error);
+            console.error('Erro ao fazer cadastro:', error);
         }
     },
     logout: () => {
+        localStorage.removeItem('authToken'); // Remove o token do localStorage
         set({ isAuthenticated: false, token: null });
+        window.location.href = '/login'; // Redireciona para a página de login
+    },
+    restoreSession: () => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            set({ isAuthenticated: true, token });
+        } else {
+            set({ isAuthenticated: false, token: null });
+        }
     },
 }));

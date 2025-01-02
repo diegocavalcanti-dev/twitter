@@ -12,6 +12,7 @@ class TweetAPITest(TestCase):
             email="testuser@example.com",
             password="password123"
         )
+
         # Login usando email e password
         response = self.client.post('/api/token/', {
             "email": "testuser@example.com",
@@ -20,16 +21,19 @@ class TweetAPITest(TestCase):
         self.token = response.json().get("access")
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
 
+        # Criar um tweet associado ao usuário
         self.tweet = Tweet.objects.create(
-            author="testuser@example.com",
+            author=self.user,  # Associar o usuário criado ao tweet
             content="This is a test tweet",
         )
 
     def test_get_tweets(self):
         response = self.client.get('/api/tweets/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("This is a test tweet", response.content.decode())
 
     def test_create_tweet(self):
-        data = {"author": "testuser@example.com", "content": "Another test tweet"}
+        data = {"content": "Another test tweet"}
         response = self.client.post('/api/tweets/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.json().get("content"), "Another test tweet")

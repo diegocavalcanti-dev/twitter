@@ -1,7 +1,15 @@
 import React from 'react';
 import { Twitter } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 export function Layout({ children }: { children: React.ReactNode }) {
+    const { logout } = useAuth();
+
+    const handleLogout = () => {
+        logout();
+        window.location.href = '/login'; // Redireciona para a página de login
+    };
+
     return (
         <div className="min-h-screen bg-black">
             <div className="container mx-auto flex min-h-screen">
@@ -21,12 +29,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
                             </a>
                         ))}
                     </nav>
+                    <button
+                        onClick={handleLogout}
+                        className="mt-8 w-[60%] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                    >
+                        Sair
+                    </button>
                 </aside>
 
                 {/* Main Content */}
-                <main className="flex-1 border-r border-gray-800">
-                    {children}
-                </main>
+                <main className="flex-1 border-r border-gray-800">{children}</main>
 
                 {/* Right Sidebar */}
                 <aside className="w-80 p-4">
