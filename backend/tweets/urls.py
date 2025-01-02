@@ -5,7 +5,7 @@ from .views import TweetViewSet
 
 # router = DefaultRouter()
 router = routers.SimpleRouter()
-router.register(r'', TweetViewSet)
+router.register(r'tweets', TweetViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Image, Smile, Calendar, MapPin } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useTweets } from '../hooks/useTweets';  // Importando o hook useTweets
 
 export function TweetBox() {
     const [tweet, setTweet] = useState('');
-    const { token } = useAuth(); // obtém o token JWT do Zustand (ou outro state management)
+    const { token } = useAuth();  // Obtém o token JWT do Zustand (ou outro state management)
+    const { tweets, setTweets } = useTweets();  // Desestruturando o estado de tweets e a função setTweets
 
     // Função para enviar o tweet para o backend
     const handleTweet = async () => {
-        // Se o campo está vazio ou não temos token, não faz nada
         if (!tweet.trim() || !token) return;
 
         try {
@@ -16,13 +17,10 @@ export function TweetBox() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Inclui o token JWT no header
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${token}`,  // Inclui o token JWT no header
                 },
-                // Ajuste o body de acordo com o que o back-end espera.
-                // No seu modelo, a prop "author" é necessária.
                 body: JSON.stringify({
-                    author: 'MeuUsername',  // ou pegue do seu state de usuário
+                    author: 'MeuUsername',  // Substitua por informações do usuário, se necessário
                     content: tweet
                 }),
             });
@@ -31,8 +29,11 @@ export function TweetBox() {
                 throw new Error('Erro ao criar tweet');
             }
 
-            // Para tratar a resposta (por exemplo, atualizar a lista de tweets localmente)
-            // const newTweet = await response.json();
+            // Para tratar a resposta e atualizar a lista de tweets localmente
+            const newTweet = await response.json();
+
+            // Atualizando a lista de tweets com o novo tweet
+            setTweets([newTweet, ...tweets]);
 
             // Limpa o textarea
             setTweet('');
