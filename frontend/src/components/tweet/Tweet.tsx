@@ -3,8 +3,8 @@ import { Heart, MessageCircle, Repeat2, Share } from 'lucide-react';
 
 interface TweetProps {
     id: string;
-    author: string;
-    handle: string;
+    username: string;
+    handle?: string;
     content: string;
     timestamp: string;
     likes: number;
@@ -12,18 +12,18 @@ interface TweetProps {
     replies: number;
 }
 
-export function Tweet({ author, handle, content, timestamp, likes, retweets, replies }: TweetProps) {
+export function Tweet({ username, handle, content, timestamp, likes, retweets, replies }: TweetProps) {
     return (
         <div className="border-b border-gray-800 p-4 hover:bg-gray-900/50">
             <div className="flex space-x-4">
                 <img
                     src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
-                    alt={author}
+                    alt={username}
                     className="h-12 w-12 rounded-full"
                 />
                 <div className="flex-1">
                     <div className="flex items-center space-x-2">
-                        <span className="font-bold text-white">{author}</span>
+                        <span className="font-bold text-white">{username}</span>
                         <span className="text-gray-500">@{handle}</span>
                         <span className="text-gray-500">·</span>
                         <span className="text-gray-500">{timestamp}</span>

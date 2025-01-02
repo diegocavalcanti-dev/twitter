@@ -1,44 +1,48 @@
 import React, { useState } from 'react';
 import { Image, Smile, Calendar, MapPin } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { useTweets } from '../hooks/useTweets';  // Importando o hook useTweets
 
 export function TweetBox() {
     const [tweet, setTweet] = useState('');
-    const { token } = useAuth();  // Obtém o token JWT do Zustand (ou outro state management)
-    const { tweets, setTweets } = useTweets();  // Desestruturando o estado de tweets e a função setTweets
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { token } = useAuth();
 
-    // Função para enviar o tweet para o backend
     const handleTweet = async () => {
-        if (!tweet.trim() || !token) return;
+        if (!tweet.trim() || !token) {
+            alert("Por favor, insira um texto válido para tweetar.");
+            return;
+        }
+
+        setIsSubmitting(true);
 
         try {
+            console.log("Enviando tweet:", tweet);
             const response = await fetch('http://127.0.0.1:8000/api/tweets/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,  // Inclui o token JWT no header
+                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    author: 'MeuUsername',  // Substitua por informações do usuário, se necessário
-                    content: tweet
-                }),
+                body: JSON.stringify({ content: tweet }),
             });
 
             if (!response.ok) {
-                throw new Error('Erro ao criar tweet');
+                throw new Error(`Erro ao criar tweet: ${response.statusText}`);
             }
 
-            // Para tratar a resposta e atualizar a lista de tweets localmente
             const newTweet = await response.json();
+            console.log("Tweet criado com sucesso:", newTweet);
 
-            // Atualizando a lista de tweets com o novo tweet
-            setTweets([newTweet, ...tweets]);
+            setTweet(''); // Limpa o campo de texto
+            // alert("Tweet enviado com sucesso!\nA página será atualizada para você ver seu novo Tweet.");
 
-            // Limpa o textarea
-            setTweet('');
+            // Hard reload: Recarrega a página inteira
+            window.location.reload();
         } catch (error) {
-            console.error(error);
+            console.error("Erro ao criar tweet:", error);
+            alert("Houve um erro ao enviar o tweet. Tente novamente.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -57,6 +61,7 @@ export function TweetBox() {
                         placeholder="What's happening?"
                         className="w-full bg-transparent text-white text-xl placeholder-gray-500 border-none focus:ring-0 resize-none"
                         rows={3}
+                        disabled={isSubmitting}
                     />
                     <div className="flex items-center justify-between pt-4 border-t border-gray-800">
                         <div className="flex space-x-4">
@@ -75,10 +80,12 @@ export function TweetBox() {
                         </div>
                         <button
                             onClick={handleTweet}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-full font-bold hover:bg-blue-600 disabled:opacity-50"
-                            disabled={!tweet.trim() || !token}
+                            className={`bg-blue-500 text-white px-4 py-2 rounded-full font-bold hover:bg-blue-600 ${
+                                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                            disabled={!tweet.trim() || !token || isSubmitting}
                         >
-                            Tweet
+                            {isSubmitting ? 'Enviando...' : 'Tweet'}
                         </button>
                     </div>
                 </div>
