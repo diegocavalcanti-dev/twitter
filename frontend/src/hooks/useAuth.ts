@@ -14,7 +14,7 @@ export const useAuth = create<AuthState>((set) => ({
     token: localStorage.getItem('authToken'), // Carrega o token do localStorage no início
     login: async (email, password) => {
         try {
-            const resp = await fetch('http://127.0.0.1:8000/api/users/token/', {
+            const resp = await fetch('https://diegocavalcantidev.pythonanywhere.com/api/users/token/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -32,7 +32,7 @@ export const useAuth = create<AuthState>((set) => ({
     },
     signup: async (name, email, password) => {
         try {
-            const resp = await fetch('http://127.0.0.1:8000/api/users/signup/', {
+            const resp = await fetch('https://diegocavalcantidev.pythonanywhere.com/api/users/signup/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

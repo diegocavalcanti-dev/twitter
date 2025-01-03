@@ -24,7 +24,7 @@ export function useTweets() {
 
         try {
             console.log("Iniciando busca por tweets...");
-            const response = await fetch('http://127.0.0.1:8000/api/tweets/', {
+            const response = await fetch('https://diegocavalcantidev.pythonanywhere.com/api/tweets/', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
