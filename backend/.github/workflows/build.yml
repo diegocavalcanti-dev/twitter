@@ -1,0 +1,45 @@
+name: Python Django Project CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.13]  # Versão do Python utilizada
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Poetry
+      run: |
+        python -m ensurepip
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade poetry
+
+    - name: Install dependencies
+      run: poetry install
+
+    - name: Run migrations
+      run: |
+        poetry run python manage.py migrate --no-input
+
+    - name: Run tests
+      run: poetry run python manage.py test
+
+    - name: Collect static files
+      run: |
+        poetry run python manage.py collectstatic --no-input
