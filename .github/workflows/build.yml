@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feat-pythonanywhere  # Inclua a branch que está usando para o deploy
+      - feat-pythonanywhere
   pull_request:
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.13]  # Versão do Python utilizada
+        python-version: [3.13]
 
     runs-on: ubuntu-latest
 
@@ -32,15 +32,19 @@ jobs:
         python -m pip install --upgrade poetry
 
     - name: Install dependencies
+      working-directory: ./backend
       run: poetry install
 
     - name: Run migrations
+      working-directory: ./backend
       run: |
         poetry run python manage.py migrate --no-input
 
     - name: Run tests
+      working-directory: ./backend
       run: poetry run python manage.py test
 
     - name: Collect static files
+      working-directory: ./backend
       run: |
         poetry run python manage.py collectstatic --no-input
