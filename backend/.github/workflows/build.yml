@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - main
+      - feat-pythonanywhere
   pull_request:
+    branches:
+      - main
+      - feat-pythonanywhere
 
 jobs:
   build:
