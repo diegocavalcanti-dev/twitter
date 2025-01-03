@@ -7,7 +7,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
     const handleLogout = () => {
         logout();
-        window.location.href = '/login'; // Redireciona para a página de login
+        window.location.href = '/'; // Redireciona para a página de login
     };
 
     return (

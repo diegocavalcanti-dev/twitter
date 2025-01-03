@@ -48,3 +48,4 @@ jobs:
       working-directory: ./backend
       run: |
         poetry run python manage.py collectstatic --no-input
+        
