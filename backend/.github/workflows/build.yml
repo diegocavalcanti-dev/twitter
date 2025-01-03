@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.13]  # Versão do Python utilizada
+        python-version: [3.11, 3.12]  # Versões estáveis do Python
 
     runs-on: ubuntu-latest
 
