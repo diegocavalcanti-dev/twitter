@@ -10,23 +10,36 @@ export function Login() {
     const [password, setPassword] = useState('');
     const { login } = useAuth();
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await login(email, password);
+
+        setIsLoading(true);
+
+        try {
+            await login(email, password);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
         <div className="min-h-screen bg-black flex items-center justify-center">
             <div className="w-full max-w-md space-y-8 p-6">
                 <Logo />
-                <h2 className="text-center text-3xl font-bold text-white">Sign in to Twitter</h2>
+                <h2 className="text-center text-3xl font-bold text-white">
+                    Entrar no Twitter
+                </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Email address"
+                        placeholder="E-mail"
                         required
                     />
 
@@ -34,19 +47,19 @@ export function Login() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Password"
+                        placeholder="Senha"
                         required
                     />
 
-                    <Button type="submit" fullWidth>
-                        Sign in
+                    <Button type="submit" fullWidth disabled={isLoading}>
+                        {isLoading ? 'Acessando...' : 'Entrar'}
                     </Button>
                 </form>
 
                 <p className="text-center text-gray-500">
-                    Don't have an account?{' '}
+                    Não tem uma conta?{' '}
                     <Link to="/signup" className="text-blue-500 hover:underline">
-                        Sign up
+                        Cadastre-se
                     </Link>
                 </p>
             </div>

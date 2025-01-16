@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "twitter"
+package-mode = false
 version = "0.1.0"
 description = "twitter_clone"
 authors = ["Diego Cavalcanti <cavalcantidiego@hotmail.com>"]
-readme = "README.md"
+readme = "../README.md"
 
 
 [tool.poetry.dependencies]
