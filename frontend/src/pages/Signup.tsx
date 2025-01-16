@@ -51,12 +51,12 @@ export function Signup() {
                 <div className="flex justify-center">
                     <Twitter className="h-12 w-12 text-white" />
                 </div>
-                <h2 className="text-center text-3xl font-bold text-white">Create your account</h2>
+                <h2 className="text-center text-3xl font-bold text-white">Crie sua Conta</h2>
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
                         <input
                             type="email"
-                            placeholder="Email address"
+                            placeholder="Email"
                             className="w-full px-4 py-3 bg-black border border-gray-800 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                             required
                             value={email}
@@ -66,7 +66,7 @@ export function Signup() {
                     <div>
                         <input
                             type="password"
-                            placeholder="Password"
+                            placeholder="Senha"
                             className="w-full px-4 py-3 bg-black border border-gray-800 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                             required
                             value={password}
@@ -76,7 +76,7 @@ export function Signup() {
                     <div>
                         <input
                             type="password"
-                            placeholder="Confirm Password"
+                            placeholder="Senha novamente"
                             className="w-full px-4 py-3 bg-black border border-gray-800 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                             required
                             value={passwordConfirmation}
@@ -88,13 +88,13 @@ export function Signup() {
                         type="submit"
                         className="w-full py-3 bg-blue-500 text-white rounded-full font-bold hover:bg-blue-600"
                     >
-                        Sign up
+                        Cadastre-se
                     </button>
                 </form>
                 <p className="text-center text-gray-500">
-                    Already have an account?{' '}
+                    Já tem uma Conta?{' '}
                     <a href="/login" className="text-blue-500 hover:underline">
-                        Sign in
+                        Fazer login
                     </a>
                 </p>
             </div>
